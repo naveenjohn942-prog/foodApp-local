@@ -1,0 +1,43 @@
+.menubar {
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+}
+.menubar-header {
+    display: flex;
+    justify-content: space-between
+}
+
+.menubar-header > h3 {
+    font-size: 2rem;
+}
+.menubar-header > button {
+    font-size: 14px;
+    padding : 5px 16px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    height: 40px;
+}
+
+.menubar-list {
+    list-style-type: none;
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.menubar-items {
+    padding: 8px 30px;
+    border: 1px solid #fff;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.menubar-items:active, .menubar-items:hover {
+    border: none;
+    background: #3e3e3e;
+}
