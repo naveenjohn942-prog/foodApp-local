@@ -3,6 +3,7 @@ package com.user.orderservice.controller;
 import com.user.orderservice.model.Orders;
 import com.user.orderservice.model.dto.OrderDTO;
 import com.user.orderservice.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<Orders>> getOrderHistory(@RequestParam Long userId) {
+    public ResponseEntity<List<Orders>> getOrderHistory(@RequestParam Long userId, HttpServletRequest request) {
         List<Orders> orders = orderService.getOrderHistory(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }

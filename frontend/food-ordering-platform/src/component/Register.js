@@ -35,7 +35,7 @@ const RegisterPage = () => {
     try {
       setLoading(true); // Set loading to true during the request
 
-      await axios.post('http://localhost:9000/user/create', {
+      await axios.post('http://arm.autone.eu.org:9001/user/create', {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

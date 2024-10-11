@@ -39,8 +39,10 @@ public class CartController {
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<CartDTO> removeItemFromCart(@RequestParam Integer userId,@RequestParam Long itemId) {
-        CartDTO cartDTO = cartService.removeItemFromCart(userId, itemId);
+    public ResponseEntity<CartDTO> removeItemFromCart(@RequestParam Integer userId,@RequestParam Long itemId,@RequestParam int quantity,HttpServletRequest request) {
+        System.out.println("userId = " + userId + ", itemId = " + itemId + ", quantity = " + quantity);
+        CartDTO cartDTO = cartService.removeItemFromCart(userId, itemId, quantity);
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
+
 }

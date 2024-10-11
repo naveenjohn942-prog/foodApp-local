@@ -5,16 +5,16 @@ import { getCart } from '../api'
 
 const Cart = () => {
 const {data, setData} = useData()
+const userId = localStorage.getItem('userId')
 useEffect(() => {
-    getCart(data.user.userId, localStorage.getItem("token"), setData)
+    getCart(userId, localStorage.getItem("token"), setData)
 },[])
   return (
     <div className='cart'>
     <div className='cart-header'>
     <h1>Cart</h1> 
-    <span>{data.user.name}</span>
     </div>
-    <CartList cart={data.cart} userId={data.user.userId} />
+    <CartList cart={data.cart} userId={userId} />
       
     </div>
   )

@@ -11,5 +11,5 @@ public interface CartService {
     double calculateTotalPrice(List<CartItem> items);
     CartDTO viewCart(Integer userId);
     CartDTO checkout(Integer userId) throws Exception;
-    CartDTO removeItemFromCart(Integer userId, Long itemId);
+    CartDTO removeItemFromCart(Integer userId, Long itemId, int quantity);
 }

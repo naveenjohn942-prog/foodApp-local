@@ -1,15 +1,14 @@
 package com.user.cartservice.service.Impl;
 
-import com.user.cartservice.model.Cart;
-import com.user.cartservice.model.CartItem;
-import com.user.cartservice.model.InventoryItemDTO;
-import com.user.cartservice.model.UserDTO;
+import com.user.cartservice.model.*;
 import com.user.cartservice.model.dto.CartDTO;
-import com.user.cartservice.model.dto.CartItemDTO;
+import com.user.cartservice.model.dto.OrderItemDTO;
 import com.user.cartservice.repository.CartRepository;
 import com.user.cartservice.service.CartService;
 import com.user.cartservice.service.InventoryServiceFeignClient;
+import com.user.cartservice.service.OrderServiceFeignClient;
 import com.user.cartservice.service.UserServiceFeignClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,8 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final UserServiceFeignClient userServiceFeignClient;
     private final InventoryServiceFeignClient inventoryServiceFeignClient;
+    @Autowired
+    private OrderServiceFeignClient orderServiceFeignClient;
     public CartServiceImpl(CartRepository cartRepository,UserServiceFeignClient userServiceFeignClient,InventoryServiceFeignClient inventoryServiceFeignClient) {
         this.cartRepository = cartRepository;
         this.userServiceFeignClient = userServiceFeignClient;
@@ -49,7 +50,7 @@ public class CartServiceImpl implements CartService {
         InventoryItemDTO itemDTO = itemResponse.getBody();
 
         // Fetch or create cart
-        Cart cart = cartRepository.findByUserId(userId).orElse(new Cart());
+        Cart cart = cartRepository.findByUserIdOrderByIdAsc(userId).orElse(new Cart());
         cart.setUserId(userId);
 
         // Add or update item in cart
@@ -92,7 +93,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO viewCart(Integer userId) {
-        Optional<Cart> optionalCart = cartRepository.findByUserId(userId);
+        Optional<Cart> optionalCart = cartRepository.findByUserIdOrderByIdAsc(userId);
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
             return convertToDTO(cart);
@@ -104,7 +105,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDTO checkout(Integer userId) throws Exception {
-        Optional<Cart> optionalCart = cartRepository.findByUserId(userId);
+        System.out.println("userId = " + userId);
+        Optional<Cart> optionalCart = cartRepository.findByUserIdOrderByIdAsc(userId);
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
             List<String> outOfStockItems = new ArrayList<>();
@@ -127,6 +129,23 @@ public class CartServiceImpl implements CartService {
                 inventoryServiceFeignClient.deductStock(item.getItemId(), item.getQuantity());
             }
 
+            // Prepare OrderDTO to create an order
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setUserId(userId.longValue());
+            List<OrderItemDTO> orderItems = cart.getItems().stream()
+                    .map(cartItem -> {
+                        OrderItemDTO orderItemDTO = new OrderItemDTO();
+                        orderItemDTO.setItemId(cartItem.getItemId());
+                        orderItemDTO.setQuantity(cartItem.getQuantity());
+                        orderItemDTO.setPrice(cartItem.getPrice());
+                        return orderItemDTO;
+                    }).collect(Collectors.toList());
+            orderDTO.setOrderItems(orderItems);
+
+            // Call the create order API
+            orderServiceFeignClient.createOrder(orderDTO);
+
+            // Clear cart after successful checkout
             cart.getItems().clear();
             Cart savedCart = cartRepository.save(cart);
 
@@ -135,21 +154,37 @@ public class CartServiceImpl implements CartService {
             throw new IllegalStateException("Cart not found for user ID: " + userId);
         }
     }
-
     @Override
-    public CartDTO removeItemFromCart(Integer userId, Long itemId) {
-        Optional<Cart> optionalCart = cartRepository.findByUserId(userId);
+    public CartDTO removeItemFromCart(Integer userId, Long itemId, int quantity) {
+        Optional<Cart> optionalCart = cartRepository.findByUserIdOrderByIdAsc(userId);
+
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
-            // Remove the item with the matching itemId
-            cart.setItems(cart.getItems().stream()
-                    .filter(item -> !item.getItemId().equals(itemId))
-                    .collect(Collectors.toList()));
+            List<CartItem> items = cart.getItems();
 
-            Cart savedCart = cartRepository.save(cart);
-            return convertToDTO(savedCart);
+            Optional<CartItem> optionalItem = items.stream()
+                    .filter(item -> item.getItemId().equals(itemId))
+                    .findFirst();
+
+            if (optionalItem.isPresent()) {
+                CartItem cartItem = optionalItem.get();
+
+                if (cartItem.getQuantity() <= quantity) {
+                    items.remove(cartItem);
+                } else {
+                    cartItem.setQuantity(cartItem.getQuantity() - quantity);
+                }
+
+                cart.setTotalPrice(calculateTotalPrice(items));
+
+                Cart savedCart = cartRepository.save(cart);
+                return convertToDTO(savedCart);
+            } else {
+                throw new IllegalStateException("Item not found in cart for user ID: " + userId);
+            }
         } else {
             throw new IllegalStateException("Cart not found for user ID: " + userId);
         }
     }
+
 }

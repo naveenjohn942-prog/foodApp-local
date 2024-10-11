@@ -2,40 +2,48 @@ version: '3.8'
 services:
   eureka-service:
     image: naveenjohn/serviceregistry-arm:latest
+    restart: unless-stopped
     ports:
       - "8761:8761"  # Eureka's own port
       - "9001:9000"  # Gateway's port
       - "8084:8084"  # Cart service's port
       - "8082:8082"  # Inventory service's port
       - "8086:8086"  # Order service's port
-      - "8080:8080"  # User service's port
+      - "8282:8080"  # User service's port
 
   gateway:
     image: naveenjohn/gateway-arm:latest
+    restart: unless-stopped
     network_mode: "service:eureka-service"
     depends_on:
       - eureka-service
 
   cartservice:
     image: naveenjohn/cartservice-arm:latest
+    restart: unless-stopped
     network_mode: "service:eureka-service"
     depends_on:
       - eureka-service
 
   inventoryservice:
     image: naveenjohn/inventoryservice-arm:latest
+    restart: unless-stopped
     network_mode: "service:eureka-service"
+    volumes:
+      - uploads:/uploads
     depends_on:
       - eureka-service
 
   orderservice:
     image: naveenjohn/orderservice-arm:latest
+    restart: unless-stopped
     network_mode: "service:eureka-service"
     depends_on:
       - eureka-service
 
   userservice:
     image: naveenjohn/userservice-arm:latest
+    restart: unless-stopped
     network_mode: "service:eureka-service"
     depends_on:
       - eureka-service
@@ -43,3 +51,7 @@ services:
 networks:
   food_order_network:
     driver: bridge
+
+volumes:
+  uploads:
+    external: true

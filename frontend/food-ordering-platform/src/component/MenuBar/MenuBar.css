@@ -41,3 +41,13 @@
     border: none;
     background: #3e3e3e;
 }
+.menubar-search {
+    margin: 10px 0;
+    padding: 8px;
+    width: 100%;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: black;
+  }
+  

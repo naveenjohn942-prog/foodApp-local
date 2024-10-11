@@ -17,18 +17,36 @@ import axios from "axios";
 export const addToCart = async (userId, itemId,token, setData) => {
  
     console.log(token)
-const response = await axios.post(`http://localhost:9000/cart/add?userId=${userId}&itemId=${itemId}&quantity=1`, {},
+const response = await axios.post(`http://arm.autone.eu.org:9001/cart/add?userId=${userId}&itemId=${itemId}&quantity=1`, {},
     {      headers: {
         'Authorization': `Bearer ${token}`,}}
     )
     getCart(userId, token, setData)
-console.log(response)
+console.log(response)   
 }
 
 export const getCart = async (userId, token, setData) => {
-        const response = await axios.get(`http://localhost:9000/cart/view?userId=${userId}`, {      headers: {
-            'Authorization': `Bearer ${token}`,}}
-        )
-        setData({type:"CART", cart:response.data.items})
-        console.log(response)
+    const response = await axios.get(`http://arm.autone.eu.org:9001/cart/view?userId=${userId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    // Sorting the items by itemId
+    const sortedItems = response.data.items.sort((a, b) => a.itemId - b.itemId);
+
+    // Updating the state with the sorted items
+    setData({ type: "CART", cart: sortedItems });
+    
+    console.log(sortedItems, "Sorted Cart Items");
+};
+
+
+export const removeFromCart = async (userId, itemId,token, setData) => {
+ 
+    console.log(token)
+const response = await axios.delete(`http://arm.autone.eu.org:9001/cart/remove?userId=${userId}&itemId=${itemId}&quantity=1`,
+    {      headers: {
+        'Authorization': `Bearer ${token}`,}}
+    )
+    getCart(userId, token, setData)
+console.log(response)   
 }

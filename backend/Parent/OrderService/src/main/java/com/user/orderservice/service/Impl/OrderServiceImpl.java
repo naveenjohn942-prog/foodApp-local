@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setTrackingId(UUID.randomUUID().toString());
         orders.setCreatedAt(LocalDateTime.now());
 
-        // Map order items
+        // Map order items without checking or deducting stock
         List<OrderItem> orderItems = orderDTO.getOrderItems().stream().map(dto -> {
             OrderItem item = new OrderItem();
             item.setItemId(dto.getItemId());
@@ -40,20 +40,11 @@ public class OrderServiceImpl implements OrderService {
             return item;
         }).collect(Collectors.toList());
 
-        for (OrderItem orderItem : orderItems) {
-            ResponseEntity<Boolean> isStockAvailable = inventoryClient.checkStock(orderItem.getItemId(), orderItem.getQuantity());
-            Boolean stockAvailable = isStockAvailable.getBody();
-            if (stockAvailable == null || !stockAvailable) {
-                throw new IllegalStateException("Stock unavailable for item ID: " + orderItem.getItemId());
-            }
-            // Deduct stock
-            inventoryClient.deductStock(orderItem.getItemId(), orderItem.getQuantity());
-        }
-
         orders.setOrderItems(orderItems);
 
         return orderRepository.save(orders);
     }
+
 
 
     @Override

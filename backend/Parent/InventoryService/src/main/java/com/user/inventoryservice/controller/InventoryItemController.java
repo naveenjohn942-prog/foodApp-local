@@ -33,6 +33,44 @@ public class InventoryItemController {
         this.inventoryService = inventoryService;
     }
 
+//    @PostMapping("/items")
+//    public ResponseEntity<String> createItem(@ModelAttribute InventoryItemCreateDTO inventoryItemCreateDTO,
+//                                             @RequestParam("file") MultipartFile file) {
+//        try {
+//            if (file == null || file.isEmpty()) {
+//                throw new IllegalArgumentException("File is missing or empty.");
+//            }
+//
+//            String originalFilename = file.getOriginalFilename();
+//            if (originalFilename == null || originalFilename.isEmpty()) {
+//                throw new IllegalArgumentException("The file name is missing or empty.");
+//            }
+//
+//            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+//            String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
+//
+//            InventoryItem inventoryItem = InventoryItemMapper.toEntity(inventoryItemCreateDTO);
+//            inventoryItem.setImage(uniqueFileName); // Store the unique file name in the inventory item
+//
+//            String filePath = Utility.Upload_Path + File.separator + uniqueFileName;
+//
+//            File directory = new File(Utility.Upload_Path);
+//            if (!directory.exists()) {
+//                directory.mkdirs();
+//            }
+//
+//            Files.copy(file.getInputStream(), Paths.get(filePath));
+//
+//            inventoryService.createItem(inventoryItem);
+//
+//            return ResponseEntity.status(HttpStatus.CREATED)
+//                    .body("Item " + inventoryItem.getName() + " created successfully!");
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to upload image or save item: " + e.getMessage());
+//        }
+//    }
     @PostMapping("/items")
     public ResponseEntity<String> createItem(@ModelAttribute InventoryItemCreateDTO inventoryItemCreateDTO,
                                              @RequestParam("file") MultipartFile file) {
@@ -46,21 +84,27 @@ public class InventoryItemController {
                 throw new IllegalArgumentException("The file name is missing or empty.");
             }
 
+            // Generate a unique filename for the uploaded file
             String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
 
+            // Map DTO to entity and set the generated file name
             InventoryItem inventoryItem = InventoryItemMapper.toEntity(inventoryItemCreateDTO);
-            inventoryItem.setImage(uniqueFileName); // Store the unique file name in the inventory item
+            inventoryItem.setImage(uniqueFileName);  // Store the file name in the item
 
+            // Define file path where image will be saved
             String filePath = Utility.Upload_Path + File.separator + uniqueFileName;
 
+            // Create directories if they don't exist
             File directory = new File(Utility.Upload_Path);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
 
+            // Save the file to the defined path
             Files.copy(file.getInputStream(), Paths.get(filePath));
 
+            // Save item information to the database
             inventoryService.createItem(inventoryItem);
 
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -78,7 +122,7 @@ public class InventoryItemController {
         List<InventoryItemDTO> itemDTOs = items.stream()
                 .map(item -> {
                     InventoryItemDTO dto = InventoryItemMapper.toDTO(item);
-                    dto.setImageUrl("http://localhost:8082/inventory/items/image/" + item.getImage());
+                    dto.setImageUrl("http://arm.autone.eu.org:8082/inventory/items/image/" + item.getImage());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -88,6 +132,7 @@ public class InventoryItemController {
     @GetMapping("/items/image/{filename:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
+            // Access the image file from the /uploads directory inside the container
             String filePath = Utility.Upload_Path + File.separator + filename;
             System.out.println("Trying to access file: " + filePath);  // Log the file path
             Path imagePath = Paths.get(filePath);
@@ -106,13 +151,14 @@ public class InventoryItemController {
     }
 
 
+
     @GetMapping("/items/category/{category}")
     public ResponseEntity<List<InventoryItemDTO>> getItemsByCategory(@PathVariable String category) {
         List<InventoryItem> items = inventoryService.getItemsByCategory(category);
         List<InventoryItemDTO> itemDTOs = items.stream()
                 .map(item -> {
                     InventoryItemDTO dto = InventoryItemMapper.toDTO(item);
-                    dto.setImageUrl("http://localhost:8082/inventory/items/image/" + item.getImage());
+                    dto.setImageUrl("http://arm.autone.eu.org:8082/inventory/items/image/" + item.getImage());
                     return dto;
                 })
                 .collect(Collectors.toList());

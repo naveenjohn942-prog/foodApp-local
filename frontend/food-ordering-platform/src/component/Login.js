@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import Navbar from './nav';
 
-const Login = (isToken) => {
+const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const { data, setData } = useData();
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/home');
+    }
+  }, [navigate]);
+
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,12 +32,13 @@ const Login = (isToken) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:9000/auth/login', {
+      const response = await axios.post('http://arm.autone.eu.org:9001/auth/login', {
         email: formData.email,
         password: formData.password,
       });
 
-      localStorage.setItem('token', response.data.token); // Save token for authentication
+      localStorage.setItem('token', response.data.token); 
+      localStorage.setItem('userId', response.data.user.userId);// Save token for authentication
       setData({ type: 'USER', user: response.data.user });
       setMessage('Login successful!');
       navigate('/Home');
@@ -37,7 +48,6 @@ const Login = (isToken) => {
   };
 
   return (<>
-  <Navbar isToken={isToken}/>
   <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

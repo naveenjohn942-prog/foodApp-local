@@ -20,6 +20,7 @@ public class Mapping {
             dto.setItemName(item.getItemName());
             dto.setPrice(item.getPrice());
             dto.setQuantity(item.getQuantity());
+            dto.setImageUrl(item.getImageUrl());
             return dto;
         }).collect(Collectors.toList());
 
