@@ -6,7 +6,7 @@ import com.user.inventoryservice.model.dto.InventoryItemDTO;
 
 public class InventoryItemMapper {
     public static InventoryItemDTO toDTO(InventoryItem inventoryItem) {
-        String imageUrl = "http://localhost:8082/inventory/items/image/" + inventoryItem.getImage();
+        String imageUrl = "https://inventory.autone.eu.org/inventory/items/image/" + inventoryItem.getImage();
         return new InventoryItemDTO(
                 inventoryItem.getProductId(),
                 inventoryItem.getName(),

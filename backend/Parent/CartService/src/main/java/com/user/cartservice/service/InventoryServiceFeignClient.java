@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 
-@FeignClient(name = "InventoryService", url = "http://localhost:8082")
+@FeignClient(name = "InventoryService", url = "https://inventory.autone.eu.org")
 public interface InventoryServiceFeignClient {
     @GetMapping("/inventory/items/{id}")
     ResponseEntity<InventoryItemDTO> getItemById(@PathVariable("id") Long id);

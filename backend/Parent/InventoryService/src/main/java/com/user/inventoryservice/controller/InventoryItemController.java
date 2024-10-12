@@ -122,7 +122,7 @@ public class InventoryItemController {
         List<InventoryItemDTO> itemDTOs = items.stream()
                 .map(item -> {
                     InventoryItemDTO dto = InventoryItemMapper.toDTO(item);
-                    dto.setImageUrl("https://inventory.autone.eu.org/inventory/items/image/" + item.getImage());
+                    dto.setImageUrl("http://arm.autone.eu.org:8082/inventory/items/image/" + item.getImage());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -158,7 +158,7 @@ public class InventoryItemController {
         List<InventoryItemDTO> itemDTOs = items.stream()
                 .map(item -> {
                     InventoryItemDTO dto = InventoryItemMapper.toDTO(item);
-                    dto.setImageUrl("https://inventory.autone.eu.org/inventory/items/image/" + item.getImage());
+                    dto.setImageUrl("http://arm.autone.eu.org:8082/inventory/items/image/" + item.getImage());
                     return dto;
                 })
                 .collect(Collectors.toList());

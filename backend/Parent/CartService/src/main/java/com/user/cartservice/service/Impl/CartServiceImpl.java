@@ -69,7 +69,8 @@ public class CartServiceImpl implements CartService {
             newItem.setUserId(Long.valueOf(userId));
             newItem.setItemName(itemDTO.getName());
             newItem.setPrice(itemDTO.getPrice());
-            newItem.setImageUrl(itemDTO.getImageUrl());
+            String imageUrl = itemDTO.getImageUrl().replace("http://localhost:8082", "https://inventory.autone.eu.org");
+            newItem.setImageUrl(imageUrl);
             newItem.setQuantity(quantity);
             items.add(newItem);
         }
