@@ -13,7 +13,7 @@ const OrderHistory = ({isToken}) => {
   useEffect(() => {
     // Fetch order history data from API
     axios
-      .get(`http://arm.autone.eu.org:9001/orders/history?userId=${userId}`, {
+      .get(`https://gateway.autone.eu.org/orders/history?userId=${userId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, // Pass token here

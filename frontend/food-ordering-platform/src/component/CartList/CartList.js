@@ -27,7 +27,7 @@ const CartList = ({ cart, userId }) => {
   const handleCheckout = async (userId, token) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://arm.autone.eu.org:9001/cart/checkout?userId=${userId}`, {
+      const response = await fetch(`https://gateway.autone.eu.org/cart/checkout?userId=${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

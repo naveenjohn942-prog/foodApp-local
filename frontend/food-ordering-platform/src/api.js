@@ -17,7 +17,7 @@ import axios from "axios";
 export const addToCart = async (userId, itemId,token, setData) => {
  
     console.log(token)
-const response = await axios.post(`http://arm.autone.eu.org:9001/cart/add?userId=${userId}&itemId=${itemId}&quantity=1`, {},
+const response = await axios.post(`https://gateway.autone.eu.org/cart/add?userId=${userId}&itemId=${itemId}&quantity=1`, {},
     {      headers: {
         'Authorization': `Bearer ${token}`,}}
     )
@@ -26,7 +26,7 @@ console.log(response)
 }
 
 export const getCart = async (userId, token, setData) => {
-    const response = await axios.get(`http://arm.autone.eu.org:9001/cart/view?userId=${userId}`, {
+    const response = await axios.get(`https://gateway.autone.eu.org/cart/view?userId=${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 
@@ -43,7 +43,7 @@ export const getCart = async (userId, token, setData) => {
 export const removeFromCart = async (userId, itemId,token, setData) => {
  
     console.log(token)
-const response = await axios.delete(`http://arm.autone.eu.org:9001/cart/remove?userId=${userId}&itemId=${itemId}&quantity=1`,
+const response = await axios.delete(`https://gateway.autone.eu.org/cart/remove?userId=${userId}&itemId=${itemId}&quantity=1`,
     {      headers: {
         'Authorization': `Bearer ${token}`,}}
     )

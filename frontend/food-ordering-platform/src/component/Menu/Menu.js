@@ -18,7 +18,7 @@ const Menu = () => {
   const getData = async () => {
     try {
       const category = [];
-      const response = await axios.get('http://arm.autone.eu.org:9001/inventory/items', {
+      const response = await axios.get('https://gateway.autone.eu.org/inventory/items', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

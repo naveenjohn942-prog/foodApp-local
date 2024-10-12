@@ -32,7 +32,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://arm.autone.eu.org:9001/auth/login', {
+      const response = await axios.post('https://gateway.autone.eu.org/auth/login', {
         email: formData.email,
         password: formData.password,
       });

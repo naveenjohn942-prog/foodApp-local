@@ -14,8 +14,8 @@ const InventoryList = () => {
     setLoading(true);
     try {
       const response = await axios.get(category === 'All'
-        ? 'http://arm.autone.eu.org:9001/inventory/items'
-        : `http://arm.autone.eu.org:9001/inventory/items/category/${category}`);
+        ? 'https://gateway.autone.eu.org/inventory/items'
+        : `https://gateway.autone.eu.org/inventory/items/category/${category}`);
       setItems(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);

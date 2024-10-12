@@ -1,9 +1,0 @@
-{
-    "rewrites": [
-      {
-        "source": "/api/(.*)",
-        "destination": "http://arm.autone.eu.org:9001/auth/login"
-      }
-    ]
-  }
-  
