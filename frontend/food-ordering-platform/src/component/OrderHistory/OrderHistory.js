@@ -53,7 +53,7 @@ const OrderHistory = ({isToken}) => {
                     <span>
                       {item.quantity} x Item {item.itemId}
                     </span>
-                    <span>${item.price.toFixed(2)}</span>
+                    <span>₹{item.price.toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
