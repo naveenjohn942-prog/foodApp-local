@@ -4,6 +4,7 @@ import { addToCart } from '../../api';
 
 const MenuCard = ({ menuItem, categoryName, searchTerm, userId, token, setData }) => {
   const filteredItems = menuItem?.filter((item) => {
+    console.log("hfhf",item,categoryName)
     const matchesCategory = categoryName === 'All' || item.category === categoryName;
     const matchesSearchTerm = item.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearchTerm;
