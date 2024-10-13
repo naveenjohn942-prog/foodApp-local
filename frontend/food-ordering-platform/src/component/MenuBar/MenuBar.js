@@ -1,42 +1,30 @@
 import React from 'react';
 import './MenuBar.css';
 
-const MenuBar = ({ category, setData, setSearchTerm }) => {
+const MenuBar = ({ category, setCategoryName, setSearchTerm }) => {
   return (
     <div className='menubar'>
       <div className='menubar-header'>
         <h3>Menu Category</h3>
-        <button>view all</button>
+        <button onClick={() => setCategoryName('All')}>View All</button>
       </div>
 
       {/* Search input field */}
-      
-
       <ul className='menubar-list'>
-        <button>
-          <li
-            className='menubar-items'
-            onClick={() => setData({ type: 'GET_CATEGORY_NAME', categoryName: 'All' })}
-          >
-            All
-          </li>
+        <button onClick={() => setCategoryName('All')}>
+          <li className='menubar-items'>All</li>
         </button>
         {category?.map((categoryName, i) => (
-          <button key={i}>
-            <li
-              className='menubar-items'
-              onClick={() => setData({ type: 'GET_CATEGORY_NAME', categoryName })}
-            >
-              {categoryName}
-            </li>
+          <button key={i} onClick={() => setCategoryName(categoryName)}>
+            <li className='menubar-items'>{categoryName}</li>
           </button>
         ))}
         <input
-        type="text"
-        placeholder="Search items..."
-        className="menubar-search"
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+          type="text"
+          placeholder="Search items..."
+          className="menubar-search"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </ul>
     </div>
   );
